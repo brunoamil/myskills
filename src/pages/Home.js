@@ -1,30 +1,63 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   View,
   Text,
   StyleSheet,
   TextInput,
   Platform,
-  TouchableOpacity } from 'react-native';
+  FlatList
+  } from 'react-native';
+
+import { Button } from '../components/Button';
+import { SkillCard } from '../components/SkillCard';
 
 export function Home(){
+  const [newSkill, setNewSkill] = useState('');
+  const [mySkills, setMySkills] = useState([]);
+  const [grettings, setGreetings] = useState('');
+
+
+  function handleAddNewSKill(){
+    setMySkills(oldState => [...oldState, newSkill]);
+  }
+
+  useEffect(() => {
+    const currentHour = new Date().getHours();
+    if(currentHour < 12) {
+      setGreetings('Good Morning');
+    } else if (currentHour >= 12 && currentHour < 18) {
+      setGreetings('Good Afternon');
+    } else {
+      setGreetings('Good Night');
+    }
+  }, []);
+
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Welcome, Bruno Lima</Text>
-
+      <Text style={styles.greetins}>
+        {grettings}
+      </Text>
       <TextInput
         style={styles.input}
         placeholder='New Skill'
         placeholderTextColor="#555"
+        onChangeText={setNewSkill}
       />
 
-      <TouchableOpacity style={styles.button} activeOpacity={.7}>
-        <Text style={styles.buttonText}>Add</Text>
-      </TouchableOpacity>
+      <Button onPress={handleAddNewSKill} />
 
-      <Text style={[styles.title, { marginTop: 50}]}>
+      <Text style={[styles.title, { marginVertical: 50}]}>
         My Skills
       </Text>
+
+      <FlatList
+        data={mySkills}
+        keyExtractor={item => item}
+        renderItem={({ item}) => (
+          <SkillCard skill={item} />
+        )}
+      />
     </View>
   )
 }
@@ -50,16 +83,7 @@ const styles = StyleSheet.create({
     marginTop: 30,
     borderRadius: 7
   },
-  button: {
-    backgroundColor: '#A370F7',
-    padding: 15,
-    borderRadius: 7,
-    alignItems: 'center',
-    marginTop: 20
-  },
-  buttonText: {
-    color: '#FFF',
-    fontSize: 17,
-    fontWeight: 'bold'
+  greetins: {
+    color: '#FFF'
   }
 })
